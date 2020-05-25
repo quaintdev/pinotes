@@ -12,7 +12,8 @@ Save notes from desktop/mobile browser to raspberry pi
 1. Create a search engine using this url http://raspberrypi.local:8008/add?q=
 2. Assign a keyword such as `ank`
 
-#### Address Bar
+## Taking notes
+#### Browser Address Bar
 Start taking notes from your browser address bar with
 
 ```
@@ -25,7 +26,7 @@ Start taking notes from your browser address bar with
 
 Above searches will create `grocery.md`, `todo.md` & `bmark.md` in directory specified by config file.
 
-#### Context Menu
+#### Browser Context Menu
 You can also add a context menu to send selected text as a note to your PI server. By default, any note without # will directly be saved to `web_notes.md` as define in config.json
 
 Note that both browser address bar and context menu option can be used with mobiles too!
