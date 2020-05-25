@@ -27,6 +27,6 @@ Start taking notes from your browser address bar with
 Above searches will create `grocery.md`, `todo.md` & `bmark.md` in directory specified by config file.
 
 #### Browser Context Menu
-You can also add a context menu to send selected text as a note to your PI server. By default, any note without # will directly be saved to `web_notes.md` as define in config.json
+You can also add a context menu using addons like [this](https://addons.mozilla.org/en-US/firefox/addon/context-search-we/) to send selected text as a note to your PI server. By default, any note without # will directly be saved to `web_notes.md` as define in config.json
 
 Note that both browser address bar and context menu option can be used with mobiles too!
