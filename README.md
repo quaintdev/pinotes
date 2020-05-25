@@ -6,7 +6,7 @@ Save notes from desktop/mobile browser to raspberry pi
 ### Raspberry PI/Desktop
 1. Install using `go get github.com/quaintdev/pinotes`
 2. Create a config file 
-3. ./ank
+3. ./pinotes
 
 ### Browser
 1. Create a search engine using this url http://raspberrypi.local:8008/add?q=
