@@ -10,18 +10,18 @@ Save notes from desktop/mobile browser to raspberry pi
 
 ### Browser
 1. Create a search engine using this url http://raspberrypi.local:8008/add?q=
-2. Assign a keyword such as `ank`
+2. Assign a keyword such as `pin`
 
 ## Taking notes
 #### Browser Address Bar
 Start taking notes from your browser address bar with
 
 ```
-  ank grocery#rice
+  pin grocery#rice
 
-  ank todo#pay electricity bill
+  pin todo#pay electricity bill
 
-  ank bmark#htttp://news.ycombinator.com
+  pin bmark#htttp://news.ycombinator.com
 ```
 
 Above searches will create `grocery.md`, `todo.md` & `bmark.md` in directory specified by config file.
