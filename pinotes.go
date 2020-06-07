@@ -28,9 +28,22 @@ func main() {
 		log.Println("invalid config present. err", err)
 		return
 	}
+
+	fs := http.FileServer(http.Dir(config.Path))
+
 	http.HandleFunc("/add", handleAdd(config))
+	http.Handle("/view", SetHeadersAndServe(fs))
+
 	log.Println("Starting server on 8008")
 	http.ListenAndServe(":8008", nil)
+}
+
+func SetHeadersAndServe(f http.Handler) http.HandlerFunc {
+	return func(writer http.ResponseWriter, request *http.Request) {
+		writer.Header().Set("Content-Type", "text/plain")
+		writer.Header().Set("Charset", "UTF-8")
+		f.ServeHTTP(writer,request)
+	}
 }
 
 func handleAdd(config Conf) func(http.ResponseWriter, *http.Request) {
@@ -45,7 +58,7 @@ func handleAdd(config Conf) func(http.ResponseWriter, *http.Request) {
 			}
 			var fileToOpen string
 			var note string
-			querySlice := strings.Split(query, "#")
+			querySlice := strings.Split(query, "!")
 			if len(querySlice)==1{
 				fileToOpen = config.WebNotesFile
 				note = querySlice[0]
@@ -75,3 +88,5 @@ func handleAdd(config Conf) func(http.ResponseWriter, *http.Request) {
 		}
 	}
 }
+// To build for Raspberry PI 2, use:
+// GOOS=linux GOARCH=arm GOARM=7 go build main.go
