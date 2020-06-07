@@ -17,9 +17,9 @@ Save notes from desktop/mobile browser to raspberry pi
 Start taking notes from your browser address bar with
 
 ```
-  pin grocery#rice
+  pin grocery!rice
 
-  pin todo#pay electricity bill
+  pin todo!pay electricity bill
 
   pin bmark!htttp://news.ycombinator.com
 
@@ -34,4 +34,4 @@ Note that both browser address bar and context menu option can be used with mobi
 
 ## View Notes
 
-Visit http://raspberrypi.local:8008/view api to view the saved notes.
+Visit http://raspberrypi.local:8008/ to view the saved notes.
