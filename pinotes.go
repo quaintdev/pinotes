@@ -32,13 +32,13 @@ func main() {
 	fs := http.FileServer(http.Dir(config.Path))
 
 	http.HandleFunc("/add", handleAdd(config))
-	http.Handle("/view", SetHeadersAndServe(fs))
+	http.Handle("/", setHeadersAndServe(fs))
 
 	log.Println("Starting server on 8008")
 	http.ListenAndServe(":8008", nil)
 }
 
-func SetHeadersAndServe(f http.Handler) http.HandlerFunc {
+func setHeadersAndServe(f http.Handler) http.HandlerFunc {
 	return func(writer http.ResponseWriter, request *http.Request) {
 		writer.Header().Set("Content-Type", "text/plain")
 		writer.Header().Set("Charset", "UTF-8")
