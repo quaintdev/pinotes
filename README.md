@@ -24,7 +24,7 @@ Start taking notes from your browser address bar with
   pin bmark!htttp://news.ycombinator.com
 
 ```
-Above searches will create `grocery.md`, `todo.md` & `bmark.md` in directory specified by config file.
+Above searches will create `grocery.md`, `todo.md` & `bmark.md` in directory specified by config file.  
 **7-Jun-20 update: using ! as separator in url instead of # due to conflicts with url**
 
 #### Browser Context Menu
@@ -34,4 +34,4 @@ Note that both browser address bar and context menu option can be used with mobi
 
 ## View Notes
 
-Visit http://raspberrypi.local:8008/view api to view the saved notes in directory specified by the path parameter in config.json
+Visit http://raspberrypi.local:8008/view api to view the saved notes.
