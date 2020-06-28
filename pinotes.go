@@ -12,8 +12,10 @@ import (
 )
 
 type Conf struct {
-	Path string
+	Path         string
 	WebNotesFile string
+	Port         string
+	InterfaceIP  string
 }
 
 func main() {
@@ -34,15 +36,15 @@ func main() {
 	http.HandleFunc("/add", handleAdd(config))
 	http.Handle("/", setHeadersAndServe(fs))
 
-	log.Println("Starting server on 8008")
-	http.ListenAndServe(":8008", nil)
+	log.Println("Starting server on", config.InterfaceIP+":"+config.Port)
+	http.ListenAndServe(config.InterfaceIP+":"+config.Port, nil)
 }
 
 func setHeadersAndServe(f http.Handler) http.HandlerFunc {
 	return func(writer http.ResponseWriter, request *http.Request) {
 		writer.Header().Set("Content-Type", "text/plain")
 		writer.Header().Set("Charset", "UTF-8")
-		f.ServeHTTP(writer,request)
+		f.ServeHTTP(writer, request)
 	}
 }
 
@@ -59,10 +61,10 @@ func handleAdd(config Conf) func(http.ResponseWriter, *http.Request) {
 			var fileToOpen string
 			var note string
 			querySlice := strings.Split(query, "!")
-			if len(querySlice)==1{
+			if len(querySlice) == 1 {
 				fileToOpen = config.WebNotesFile
 				note = querySlice[0]
-			}else{
+			} else {
 				fileToOpen = querySlice[0]
 				note = querySlice[1]
 			}
@@ -88,5 +90,6 @@ func handleAdd(config Conf) func(http.ResponseWriter, *http.Request) {
 		}
 	}
 }
+
 // To build for Raspberry PI 2, use:
 // GOOS=linux GOARCH=arm GOARM=7 go build main.go
