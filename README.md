@@ -1,9 +1,13 @@
 # pinotes
 Save notes from desktop/mobile browser address bar. 
 
-It is highly recommended that you set this up on a Raspberry PI or on system that stays online 24x7. Do configure your firewall so that these notes are always served within your LAN and not Internet. On Ubuntu, you can use below command, assuming you have denied all incoming on your always online system.
+It is highly recommended that you set this up on a Raspberry PI or on system that stays online 24x7. We want to keep notes accessible within LAN but not Internet. Following commands disable all incoming connections first and then enable local LAN connections.
 
-`sudo ufw allow from 192.168.0.0/16`
+```
+# on raspbian/ubuntu
+ sudo ufw default deny incoming       # disables all incoming connections
+ sudo ufw allow from 192.168.0.0/16   # allows connections within local LAN
+```
 
 ## Setup
 
