@@ -1,7 +1,7 @@
 # pinotes
 Save notes from desktop/mobile browser address bar. 
 
-It is highly recommended that you set this up on a Raspberry PI or on system that stays online 24x7. Do configure your firewall so that these notes are always served within your LAN. On Ubuntu, you can use below command, assuming you have denied all incoming on your always online system.
+It is highly recommended that you set this up on a Raspberry PI or on system that stays online 24x7. Do configure your firewall so that these notes are always served within your LAN and not Internet. On Ubuntu, you can use below command, assuming you have denied all incoming on your always online system.
 
 `sudo ufw allow from 192.168.0.0/16`
 
