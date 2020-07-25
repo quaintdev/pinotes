@@ -1,6 +1,7 @@
 {
-  "path": "/home/user/.pinotes/notes/",
-  "webNotesFile": "web_notes.md",
-  "port": "8008",
+  "path": "/home/rohan/.rd/notes/",
+  "webNotesFile": "web_notes",
+  "httpPort": "8008",
+  "grpcPort": "9009",
   "interfaceIP": ""
 }

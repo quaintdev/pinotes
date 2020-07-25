@@ -1,43 +1,36 @@
 package main
 
 import (
-	"encoding/json"
 	"fmt"
-	"io/ioutil"
+	"github.com/quaintdev/pinotes/pkg/api"
+	"github.com/quaintdev/pinotes/pkg/notes"
+	"google.golang.org/grpc"
 	"log"
+	"net"
 	"net/http"
-	"os"
-	"path"
 	"strings"
 )
 
-type Conf struct {
-	Path         string
-	WebNotesFile string
-	Port         string
-	InterfaceIP  string
-}
-
 func main() {
-	configBytes, err := ioutil.ReadFile("conf.json")
-	if err != nil {
-		log.Printf("config not present. err: %s exiting.", err)
-		return
-	}
-	var config Conf
-	err = json.Unmarshal(configBytes, &config)
-	if err != nil {
-		log.Println("invalid config present. err", err)
-		return
-	}
+	config := notes.GetConfig()
 
 	fs := http.FileServer(http.Dir(config.Path))
-
-	http.HandleFunc("/add", handleAdd(config))
+	http.HandleFunc("/add", handleAdd)
 	http.Handle("/", setHeadersAndServe(fs))
+	log.Println("Starting http server on", config.InterfaceIP+":"+config.HttpPort)
+	go http.ListenAndServe(config.InterfaceIP+":"+config.HttpPort, nil)
 
-	log.Println("Starting server on", config.InterfaceIP+":"+config.Port)
-	http.ListenAndServe(config.InterfaceIP+":"+config.Port, nil)
+	grpcServer := grpc.NewServer()
+	notesService := &notes.NoteService{}
+	api.RegisterNoteServiceServer(grpcServer, notesService)
+	listener, err := net.Listen("tcp", config.InterfaceIP+":"+config.GrpcPort)
+	if err != nil {
+		log.Fatal(err)
+	}
+	log.Println("Starting grpc server on ", config.InterfaceIP+":"+config.GrpcPort)
+	if err := grpcServer.Serve(listener); err != nil {
+		log.Fatal(err)
+	}
 }
 
 func setHeadersAndServe(f http.Handler) http.HandlerFunc {
@@ -48,48 +41,41 @@ func setHeadersAndServe(f http.Handler) http.HandlerFunc {
 	}
 }
 
-func handleAdd(config Conf) func(http.ResponseWriter, *http.Request) {
-	return func(w http.ResponseWriter, r *http.Request) {
-		switch r.Method {
-		case "GET":
-			query := r.URL.Query().Get("q")
-			log.Println("query received", query)
-			if len(query) < 2 {
-				log.Println("expecting query parameter")
-				return
-			}
-			var fileToOpen string
-			var note string
-			querySlice := strings.Split(query, "!")
-			if len(querySlice) == 1 {
-				fileToOpen = config.WebNotesFile
-				note = querySlice[0]
-			} else {
-				fileToOpen = querySlice[0]
-				note = querySlice[1]
-			}
-
-			noteFilePath := path.Join(config.Path, fileToOpen+".md")
-			f, err := os.OpenFile(noteFilePath, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
-			if err != nil {
-				log.Printf("can't open %s, err: %s", noteFilePath, err)
-				return
-			}
-			defer f.Close()
-			_, err = f.WriteString(note + "\n\n")
-			if err != nil {
-				log.Println("error writing line", err)
-			}
-			notesContent, err := ioutil.ReadFile(noteFilePath)
-			if err != nil {
-				log.Printf("can't read file. err: %s", err)
-			}
-			w.Write(notesContent)
-		default:
-			fmt.Println("method not supported")
+func handleAdd(w http.ResponseWriter, r *http.Request) {
+	var ns notes.NoteService
+	switch r.Method {
+	case "GET":
+		query := r.URL.Query().Get("q")
+		log.Println("query received", query)
+		if len(query) < 2 {
+			log.Println("expecting query parameter")
+			return
 		}
+		note := &api.Note{}
+		note.Append = true
+		querySlice := strings.Split(query, "!")
+		if len(querySlice) == 1 {
+			note.Title = notes.GetConfig().WebNotesFile
+			note.Content = querySlice[0]
+		} else {
+			note.Title = querySlice[0]
+			note.Content = querySlice[1]
+		}
+		if _, err := ns.SaveNote(nil, note); err != nil {
+			w.WriteHeader(http.StatusInternalServerError)
+			log.Println(err)
+		}
+
+		entireNote, err := ns.ViewNote(nil, note)
+		if err != nil {
+			w.WriteHeader(http.StatusInternalServerError)
+			log.Println(err)
+		}
+		w.Write([]byte(entireNote.Notes[0].GetContent()))
+	default:
+		fmt.Println("method not supported")
 	}
 }
 
 // To build for Raspberry PI 2, use:
-// GOOS=linux GOARCH=arm GOARM=7 go build main.go
+// GOOS=linux GOARCH=arm GOARM=7 go build pinotes.go

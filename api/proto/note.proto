@@ -1,0 +1,25 @@
+syntax = "proto3";
+
+package api;
+
+message Note {
+  string title = 1;
+  string content = 2;
+  string user = 3;
+  bool append = 4;
+}
+
+message Response {
+  bool success = 1;
+  repeated Note notes = 2;
+}
+
+service NoteService {
+  rpc SaveNote(Note) returns (Response) {};
+  rpc ViewNote(Note) returns (Response) {};
+  rpc DeleteNote(Note) returns (Response) {};
+  rpc ListNotes(Note) returns (Response) {};
+}
+
+// server
+// protoc -I api/proto --go_out=plugins=grpc:pkg/api api/proto/note.proto
