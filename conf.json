@@ -1,6 +1,7 @@
 {
-  "path": "/home/user/.pinotes/notes/",
+  "path": "/home/pi/.rd/anknotes/",
   "webNotesFile": "web_notes.md",
   "port": "8008",
-  "interfaceIP": ""
+  "interfaceIP": "",
+  "disableViewNotes": true
 }
