@@ -89,7 +89,17 @@ func handleAdd(config *Conf) func(http.ResponseWriter, *http.Request) {
 				n.FileName = querySlice[0]
 				n.Content = querySlice[1]
 			}
-			n.Save(config)
+			//special cases that can be auto formatted in markdown
+			switch n.FileName {
+			case "quotes":
+				n.Content = "% " + n.Content
+				fallthrough
+			case "todo":
+				n.Content = "1. " + n.Content
+			default:
+				n.Save(config)
+			}
+
 			content, err := n.Read(config)
 			if err != nil {
 				log.Println("error reading note", n.FileName)
@@ -111,7 +121,7 @@ func (n *Note) Save(config *Conf) bool {
 		return false
 	}
 	defer f.Close()
-	_, err = f.WriteString(n.Content + "\n\n")
+	_, err = f.WriteString("\n" + n.Content)
 	if err != nil {
 		log.Println("error writing line", err)
 		return false
