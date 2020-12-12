@@ -11,6 +11,7 @@ import (
 	"strings"
 )
 
+//Conf configuration for the note service
 type Conf struct {
 	Path         string
 	WebNotesFile string
@@ -19,6 +20,7 @@ type Conf struct {
 	ViewNotes    bool
 }
 
+//Note holds filename of the note and its content
 type Note struct {
 	FileName string
 	Content  string
@@ -93,13 +95,10 @@ func handleAdd(config *Conf) func(http.ResponseWriter, *http.Request) {
 			switch n.FileName {
 			case "quotes":
 				n.Content = "% " + n.Content
-				fallthrough
 			case "todo":
 				n.Content = "1. " + n.Content
-			default:
-				n.Save(config)
 			}
-
+			n.Save(config)
 			content, err := n.Read(config)
 			if err != nil {
 				log.Println("error reading note", n.FileName)
@@ -113,6 +112,7 @@ func handleAdd(config *Conf) func(http.ResponseWriter, *http.Request) {
 	}
 }
 
+//Save saves the note to location specified in config
 func (n *Note) Save(config *Conf) bool {
 	noteFilePath := path.Join(config.Path, n.FileName+".md")
 	f, err := os.OpenFile(noteFilePath, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
