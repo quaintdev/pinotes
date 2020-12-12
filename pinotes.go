@@ -139,6 +139,6 @@ func (n *Note) Read(config *Conf) ([]byte, error) {
 }
 
 // To build for Raspberry PI 2, use:
-// GOOS=linux GOARCH=arm GOARM=7 go build main.go
+// GOOS=linux GOARCH=arm GOARM=7 go build github.com/quaintdev/pinotes
 // For Raspberry PI Zero, use:
-// GOOS=linux GOARCH=arm GOARM=5 go build main.go
+// GOOS=linux GOARCH=arm GOARM=5 go build github.com/quaintdev/pinotes
