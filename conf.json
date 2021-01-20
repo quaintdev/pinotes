@@ -1,6 +1,7 @@
 {
-  "path": "/home/pi/.rd/anknotes/",
-  "webNotesFile": "web_notes.md",
+  "path": "/path/to/directory/",
+  "defaultNotesFile": "notes",
+  "defaultExtennsion": "md",
   "port": "8008",
   "interfaceIP": "",
   "viewNotes": true
