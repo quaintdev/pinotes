@@ -4,5 +4,5 @@
   "defaultExtennsion": "md",
   "port": "8008",
   "interfaceIP": "",
-  "viewNotes": true
+  "canViewNotes": true
 }
