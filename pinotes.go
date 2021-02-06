@@ -25,8 +25,9 @@ type Conf struct {
 
 //Note holds filename of the note and its content
 type Note struct {
-	Topic   string
-	Content string
+	Topic     string
+	Content   string
+	Overwrite bool
 }
 
 func main() {
@@ -75,6 +76,7 @@ func handleAdd(w http.ResponseWriter, r *http.Request) {
 		}
 		n.Topic = postReq["title"].(string)
 		n.Content = postReq["content"].(string)
+		n.Overwrite = postReq["overwrite"].(bool)
 		if !n.Save() {
 			w.WriteHeader(http.StatusInternalServerError)
 			return
@@ -103,6 +105,8 @@ func handleAdd(w http.ResponseWriter, r *http.Request) {
 			w.WriteHeader(http.StatusInternalServerError)
 			return
 		}
+		w.Header().Set("Content-Type", "text/plain")
+		w.Header().Set("Charset", "UTF-8")
 		w.Write(content)
 	default:
 		fmt.Println("method not supported")
@@ -126,7 +130,13 @@ func (n *Note) Save() bool {
 		fileName = fileName + config.DefaultExtension
 	}
 	noteFilePath := path.Join(config.Path, fileName)
-	f, err := os.OpenFile(noteFilePath, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
+	var writeMode int
+	if n.Overwrite {
+		writeMode = os.O_CREATE | os.O_WRONLY
+	} else {
+		writeMode = os.O_APPEND | os.O_CREATE | os.O_WRONLY
+	}
+	f, err := os.OpenFile(noteFilePath, writeMode, 0644)
 	if err != nil {
 		log.Printf("can't open %s, err: %s", noteFilePath, err)
 		return false
