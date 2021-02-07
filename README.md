@@ -39,6 +39,9 @@ You can also add a context menu using addons like [this](https://addons.mozilla.
 
 Note that both browser address bar and context menu option can be used with mobiles too!
 
-## View Notes
+#### Browser Sidebar
+You can use [Firefox extension](https://github.com/quaintdev/pinotes-browser-ext/) to take and view notes from its sidebar as shown below
+![](https://github.com/quaintdev/pinotes-browser-ext/blob/master/screenshot.jpg)
 
-Visit http://raspberrypi.local:8008/ to view the saved notes.
+## View Notes
+You can always visit your server url http://raspberrypi.local:8008/ to list and view saved notes. Note that these are viewed in plain text and not markdown.
