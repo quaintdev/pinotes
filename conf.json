@@ -1,7 +1,7 @@
 {
   "path": "/path/to/directory/",
   "defaultNotesFile": "notes",
-  "defaultExtennsion": "md",
+  "defaultExtension": ".md",
   "port": "8008",
   "interfaceIP": "",
   "canViewNotes": false

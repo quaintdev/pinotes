@@ -52,14 +52,17 @@ func main() {
 }
 
 func setHeadersAndServe(f http.Handler) http.HandlerFunc {
-	return func(writer http.ResponseWriter, request *http.Request) {
+	return func(w http.ResponseWriter, request *http.Request) {
 		if !config.CanViewNotes {
-			writer.WriteHeader(http.StatusNotFound)
+			w.WriteHeader(http.StatusNotFound)
 			return
 		}
-		writer.Header().Set("Content-Type", "text/plain")
-		writer.Header().Set("Charset", "UTF-8")
-		f.ServeHTTP(writer, request)
+		w.Header().Set("Content-Type", "text/plain")
+		w.Header().Set("Charset", "UTF-8")
+		w.Header().Set("Cache-Control", "no-cache, no-store, must-revalidate")
+		w.Header().Set("Pragma", "no-cache")
+		w.Header().Set("Expires", "0")
+		f.ServeHTTP(w, request)
 	}
 }
 
@@ -107,6 +110,10 @@ func handleAdd(w http.ResponseWriter, r *http.Request) {
 		}
 		w.Header().Set("Content-Type", "text/plain")
 		w.Header().Set("Charset", "UTF-8")
+		//Adding below headers as the pinotes webextension caches notes. We don't want it to do that.
+		w.Header().Set("Cache-Control", "no-cache, no-store, must-revalidate")
+		w.Header().Set("Pragma", "no-cache")
+		w.Header().Set("Expires", "0")
 		w.Write(content)
 	default:
 		fmt.Println("method not supported")
@@ -119,7 +126,7 @@ func (n *Note) Process() {
 		n.Topic = n.Topic + ".txt"
 		n.Content = "% " + n.Content
 	case "todo":
-		n.Content = "1. " + n.Content
+		n.Content = "- " + n.Content
 	}
 }
 
@@ -132,7 +139,7 @@ func (n *Note) Save() bool {
 	noteFilePath := path.Join(config.Path, fileName)
 	var writeMode int
 	if n.Overwrite {
-		writeMode = os.O_CREATE | os.O_WRONLY
+		writeMode = os.O_WRONLY | os.O_CREATE | os.O_TRUNC
 	} else {
 		writeMode = os.O_APPEND | os.O_CREATE | os.O_WRONLY
 	}
