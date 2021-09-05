@@ -1,7 +1,7 @@
 # pinotes
 
 Self-hosted notes solution. Primarily targeting Raspberry PI but should work on
-any system that can stay online 24x7. 
+any other system.
 
 **Breaking change**  
 5th Sept 21:
