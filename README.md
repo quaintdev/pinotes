@@ -1,7 +1,19 @@
 # pinotes
-Save notes from desktop/mobile browser address bar.   
 
-It is highly recommended that you set this up on a Raspberry PI or on system that stays online 24x7. Do configure your firewall so that these notes are always served within your LAN and not Internet.
+Self-hosted notes solution. Primarily targeting Raspberry PI but should work on
+any system that can stay online 24x7. 
+
+**Breaking change**  
+5th Sept 21:
+The application now uses sqlite instead of plain markdown files. If you had like to migrate 
+your existing notes to sqlite database you can use the command line `-migrate` option. All the 
+markdown files in current directory will be migrated to sqlite database.
+
+## Setup
+
+### Configure Firewall
+We want to make sure that the notes are served within LAN and not on 
+the Internet.
 
 ```
 # on raspbian/ubuntu
@@ -9,30 +21,63 @@ It is highly recommended that you set this up on a Raspberry PI or on system tha
  sudo ufw allow from 192.168.0.0/16   # allows connections within local LAN
 ```
 
-## Setup
+### Install
+The setup below is for raspbian. You may have to modify some steps as per your 
+distribution.
+1. Clone the repository to your desktop 
+   `git clone https://github.com/quaintdev/pinotes.git`  
 
-### Raspberry PI/Desktop
-1. Install using `go get github.com/quaintdev/pinotes`
-2. Create a config file 
-3. ./pinotes
+2. Create a systemd service file as below and move it to 
+   `/etc/systemd/system/pinotes.service` on your Raspberry pi. 
 
-### Browser
-1. Create a search engine using this url http://raspberrypi.local:8008/add?q=
-2. Assign a keyword such as `pin`
+    ```shell
+    [Unit]
+    Description=A self hosted notes service
+    After=network.target
+    
+    [Service]
+    User=pi
+    WorkingDirectory=/home/user/pinotes
+    LimitNOFILE=4096
+    ExecStart=/home/user/pinotes/pinotes.bin
+    Restart=always
+    RestartSec=10
+    StartLimitIntervalSec=0
+    
+    [Install]
+    WantedBy=multi-user.target
+    ```
+   
+2. Create a deployment script as below. You will have to modify it 
+   for your env and Pi version. This is for Raspberry Pi 2 B.
+   
+    ```shell
+    cd build
+    export CGO_ENABLED=1
+    export CC=arm-linux-gnueabi-gcc
+    GOOS=linux GOARCH=arm GOARM=7 go build github.com/quaintdev/pinotes/cmd/
+    mv cmd pinotes.bin
+    scp pinotes.bin user@piaddress:/home/user/pinotes/
+    ssh user@piaddress <<'ENDSSH'
+    cd ~/user/pinotes
+    sudo systemctl stop pinotes
+    rm pinotes.bin
+    sudo systemctl start pinotes
+    ENDSSH
+    ```
+4. Create a config file as per your requirement. You can use config.json
+   in this repository.
+5. Verify your setup by visiting http://piaddress:8008/. You will see an
+   empty list of topics `[]` if this is your first time.
 
-## Taking notes
-#### Browser Address Bar
-Start taking notes from your browser address bar with
+### Browser Config
+1. Create a search engine in your browser using url http://piaddress:8008/add?q=%s
+2. Assign a keyword such as `pi`. You should now be able to add notes like below
+   ```shell
+   pi todo - buy groceries
+   pi readlater - http://wikipedia.com/
+   ```
+3. All your notes will be saved in 'defaultTopic' defined in config.json
+4. You can view any topic using http://piaddress:8008/topic/topicname
 
-```
-  pin grocery!rice
-
-  pin todo!pay electricity bill
-
-  pin bmark!htttp://news.ycombinator.com
-
-```
-Above searches will create `grocery.md`, `todo.md` & `bmark.md` in directory specified by config file.  
-
-## View Notes
-You can always visit your server url http://raspberrypi.local:8008/ to list and view saved notes. Note that these are viewed in plain text and not markdown.
+### Migration
