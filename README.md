@@ -79,5 +79,3 @@ distribution.
    ```
 3. All your notes will be saved in 'defaultTopic' defined in config.json
 4. You can view any topic using http://piaddress:8008/topic/topicname
-
-### Migration
