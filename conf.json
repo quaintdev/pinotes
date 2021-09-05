@@ -1,8 +1,9 @@
 {
-  "path": "/path/to/directory/",
-  "defaultNotesFile": "notes",
+  "path": "/home/user/",
+  "defaultTopic": "browser",
   "defaultExtension": ".md",
   "port": "8008",
   "interfaceIP": "",
-  "canViewNotes": false
+  "canViewTopics": true,
+  "dataStoreName": "notes.db"
 }

@@ -1,3 +1,5 @@
 .idea/
 deploy.sh
 pinotes
+notes.db
+requests.http
